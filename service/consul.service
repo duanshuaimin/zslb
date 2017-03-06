@@ -1,0 +1,8 @@
+[Unit]
+  Description= Daemon to start consul
+[Service]
+  ExecStart=/usr/local/bin/consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul -node=zslb -bind=0.0.0.0 -client 0.0.0.0 -ui -config-dir /etc/consul.d/
+[Install]
+  WantedBy=multi-user.target
+  Alias=consul.service
+

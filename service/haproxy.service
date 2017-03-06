@@ -1,0 +1,9 @@
+[Unit]
+  Description= Daemon to start haproxy
+[Service]
+  ExecStart=/usr/local/sbin/haproxy-systemd-wrapper -f /etc/haproxy/haproxy.conf
+  Restart=always
+[Install]
+  WantedBy=multi-user.target
+  Alias=haproxy.service
+

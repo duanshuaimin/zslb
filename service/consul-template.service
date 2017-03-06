@@ -1,0 +1,8 @@
+[Unit]
+  Description= Daemon to start consul-template
+[Service]
+  ExecStart=/usr/local/bin/consul-template -consul-addr "localhost:8500" -template "/tmp/haproxy.ctmpl:/etc/haproxy/haproxy.conf:systemctl restart haproxy"
+[Install]
+  WantedBy=multi-user.target
+  Alias=consul-template.service
+
