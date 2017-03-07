@@ -1,0 +1,51 @@
+#
+# This is a sample configuration. It illustrates how to separate static objects
+# traffic from dynamic traffic, and how to dynamically regulate the server load.
+#
+# It listens on 192.168.1.10:80, and directs all requests for Host 'img' or
+# URIs starting with /img or /css to a dedicated group of servers. URIs
+# starting with /admin/stats deliver the stats page.
+#
+
+global
+        maxconn         10000
+        stats socket    /var/run/haproxy.stat mode 600 level admin
+        log             127.0.0.1 local0
+        uid             200
+        gid             200
+        chroot          /var/empty
+        daemon
+
+# The public 'www' address in the DMZ
+frontend public
+        bind            192.168.100.4:80 name clear
+        #bind            192.168.1.10:443 ssl crt /etc/haproxy/haproxy.pem
+        mode            http
+        log             global
+        option          httplog
+        option          dontlognull
+        monitor-uri     /monitoruri
+        maxconn         8000
+        timeout client  30s
+
+        stats uri       /admin/stats
+
+        default_backend dynamic
+
+# The static backend backend for 'Host: img', /img and /css.
+
+# the application servers go here
+backend dynamic
+        mode            http
+        balance         roundrobin
+        retries         2
+        option redispatch
+        timeout connect 5s
+        timeout server  30s
+        timeout queue   30s
+        option httpchk  HEAD /login.php
+        cookie          DYNSRV insert indirect nocache
+        fullconn        4000 # the servers will be used at full load above this number of connections
+	{{range service "nginx"}}
+	server {{.Node}} {{.Address}}:{{.Port}}  minconn 50 maxconn 500 cookie s1 check inter 1000 {{end}}      		
+
