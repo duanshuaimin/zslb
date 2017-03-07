@@ -1,0 +1,5 @@
+#!/usr/bin/sh
+BIN=/usr/local/sbin/haproxy
+CFG=/etc/haproxy/haproxy.conf
+PIDFILE=/var/run/haproxy.pid
+$BIN -D -f $CFG -p $PIDFILE -sf $(cat $PIDFILE)
