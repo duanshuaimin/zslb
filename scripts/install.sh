@@ -18,7 +18,3 @@ cp service/haproxy.service         /usr/lib/systemd/system
 cp service/diamond.service         /usr/lib/systemd/system
 
 cp service/zslb.service            /usr/lib/systemd/system
-
-
-
-
